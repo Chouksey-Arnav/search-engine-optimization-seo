@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Free AI &amp; Search Visibility Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0c0f;
+    --bg-elevated:#13161b;
+    --bg-card:#171a20;
+    --border:#262b33;
+    --border-soft:#1d2027;
+    --text:#ece9e2;
+    --text-dim:#9aa0ab;
+    --text-faint:#5d6470;
+    --gold:#d4a03c;
+    --teal:#49b8a6;
+    --coral:#ff7a5c;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+    --sans:'Inter', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    font-size:16px;
+  }
+  ::selection{background:var(--teal); color:#04140f;}
+
+  /* layout */
+  .shell{display:flex; max-width:1280px; margin:0 auto;}
+  .sidebar{
+    width:240px; flex-shrink:0;
+    position:sticky; top:0; height:100vh;
+    overflow-y:auto;
+    padding:32px 20px;
+    border-right:1px solid var(--border-soft);
+  }
+  .sidebar-brand{
+    font-family:var(--mono); font-size:12px; color:var(--teal);
+    letter-spacing:0.06em; margin-bottom:28px; display:block;
+  }
+  .sidebar-brand span{color:var(--text-faint);}
+  .nav-list{list-style:none; display:flex; flex-direction:column; gap:2px;}
+  .nav-list a{
+    display:block; padding:9px 10px; border-radius:6px;
+    color:var(--text-dim); text-decoration:none;
+    font-family:var(--mono); font-size:12.5px;
+    border-left:2px solid transparent;
+    transition:all .15s ease;
+  }
+  .nav-list a:hover{color:var(--text); background:var(--bg-card);}
+  .nav-list a.active{color:var(--gold); border-left-color:var(--gold); background:var(--bg-card);}
+  .nav-toggle{display:none;}
+
+  main{flex:1; min-width:0; padding:0 0 80px;}
+
+  /* hero */
+  .hero{
+    padding:64px 56px 48px;
+    border-bottom:1px solid var(--border-soft);
+    background:
+      radial-gradient(700px 280px at 85% -10%, rgba(73,184,166,0.10), transparent 60%),
+      radial-gradient(500px 220px at 10% 0%, rgba(212,160,60,0.08), transparent 60%);
+  }
+  .hero-eyebrow{
+    font-family:var(--mono); font-size:12px; color:var(--coral);
+    letter-spacing:0.08em; text-transform:uppercase; margin-bottom:18px;
+  }
+  h1{
+    font-family:var(--mono); font-weight:700; font-size:clamp(28px,4vw,44px);
+    line-height:1.15; letter-spacing:-0.01em; max-width:14ch; margin-bottom:18px;
+  }
+  .hero p.lead{
+    color:var(--text-dim); font-size:16.5px; max-width:62ch; margin-bottom:32px;
+  }
+  .hero p.lead strong{color:var(--text); font-weight:600;}
+
+  /* terminal / crawl log signature block */
+  .crawl-log{
+    background:#000; border:1px solid var(--border);
+    border-radius:10px; max-width:680px;
+    font-family:var(--mono); font-size:12.5px;
+    overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,0.6);
+  }
+  .crawl-log-bar{
+    display:flex; align-items:center; gap:7px;
+    padding:10px 14px; border-bottom:1px solid var(--border);
+    background:var(--bg-elevated);
+  }
+  .crawl-log-bar .dot{width:9px; height:9px; border-radius:50%;}
+  .crawl-log-bar .dot:nth-child(1){background:#ff5f57;}
+  .crawl-log-bar .dot:nth-child(2){background:#febc2e;}
+  .crawl-log-bar .dot:nth-child(3){background:#28c840;}
+  .crawl-log-bar span.path{color:var(--text-faint); margin-left:8px; font-size:11.5px;}
+  .crawl-log-body{padding:16px 18px; display:flex; flex-direction:column; gap:6px;}
+  .crawl-log-row{display:flex; gap:14px; white-space:pre; color:var(--text-dim);}
+  .crawl-log-row .method{color:var(--teal);}
+  .crawl-log-row .ok{color:#5fd98a;}
+  .crawl-log-row .miss{color:var(--coral);}
+  .crawl-log-row .note{color:var(--text-faint); font-style:italic;}
+
+  /* sections */
+  section{padding:56px 56px 8px; border-bottom:1px solid var(--border-soft);}
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; color:var(--teal);
+    margin-bottom:10px; letter-spacing:0.02em;
+  }
+  h2{
+    font-family:var(--mono); font-size:clamp(22px,3vw,28px); font-weight:600;
+    margin-bottom:14px; letter-spacing:-0.01em;
+  }
+  .section-intro{color:var(--text-dim); max-width:74ch; margin-bottom:32px; font-size:15.5px;}
+  h3{
+    font-family:var(--sans); font-size:17px; font-weight:700; color:var(--text);
+    margin:30px 0 10px;
+  }
+  h3 .tag{
+    font-family:var(--mono); font-size:10px; font-weight:600;
+    padding:2px 8px; border-radius:999px; margin-left:10px;
+    vertical-align:middle; text-transform:uppercase; letter-spacing:0.04em;
+  }
+  .tag-critical{background:rgba(73,184,166,0.15); color:var(--teal); border:1px solid rgba(73,184,166,0.35);}
+  .tag-content{background:rgba(212,160,60,0.15); color:var(--gold); border:1px solid rgba(212,160,60,0.35);}
+  .tag-optional{background:rgba(255,122,92,0.13); color:var(--coral); border:1px solid rgba(255,122,92,0.35);}
+  p{color:var(--text-dim); max-width:74ch; margin-bottom:12px; font-size:15px;}
+  p strong{color:var(--text); font-weight:600;}
+  ul.bullets{margin:10px 0 18px 0; max-width:74ch;}
+  ul.bullets li{color:var(--text-dim); font-size:15px; margin-bottom:8px; padding-left:18px; position:relative;}
+  ul.bullets li::before{content:"—"; position:absolute; left:0; color:var(--text-faint);}
+  ul.bullets li strong{color:var(--text);}
+
+  .card{
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:10px; padding:20px 22px; margin:16px 0; max-width:74ch;
+  }
+  .card-row{display:flex; gap:14px; margin-bottom:4px;}
+  .card-row:last-child{margin-bottom:0;}
+
+  pre{
+    background:#000; border:1px solid var(--border); border-left:3px solid var(--teal);
+    border-radius:8px; padding:16px 18px; overflow-x:auto;
+    font-family:var(--mono); font-size:12.5px; color:#c7e8e0;
+    max-width:74ch; margin:14px 0 22px;
+  }
+  pre.coral{border-left-color:var(--coral); color:#ffd3c5;}
+  pre.gold{border-left-color:var(--gold); color:#f0d9a6;}
+  code.inline{
+    font-family:var(--mono); background:var(--bg-card); border:1px solid var(--border);
+    padding:1px 6px; border-radius:4px; font-size:13px; color:var(--gold);
+  }
+
+  .caveat{
+    border:1px solid rgba(255,122,92,0.3); background:rgba(255,122,92,0.06);
+    border-radius:8px; padding:14px 18px; max-width:74ch; margin:18px 0;
+    font-size:14px; color:#e8c7bd;
+  }
+  .caveat strong{color:var(--coral);}
+
+  /* table */
+  table{width:100%; max-width:880px; border-collapse:collapse; margin:18px 0 30px; font-size:14px;}
+  th{
+    font-family:var(--mono); text-align:left; color:var(--text-faint); font-weight:500;
+    font-size:11px; text-transform:uppercase; letter-spacing:0.05em;
+    padding:10px 14px; border-bottom:1px solid var(--border);
+  }
+  td{padding:12px 14px; border-bottom:1px solid var(--border-soft); color:var(--text-dim); vertical-align:top;}
+  td.name{color:var(--text); font-weight:600;}
+  td a{color:var(--teal); text-decoration:none;}
+  td a:hover{text-decoration:underline;}
+  .pill{
+    font-family:var(--mono); font-size:10px; padding:2px 7px; border-radius:999px;
+    background:rgba(73,184,166,0.12); color:var(--teal); border:1px solid rgba(73,184,166,0.3);
+  }
+
+  /* checklist */
+  .checklist-group{margin-bottom:28px;}
+  .checklist-group h4{
+    font-family:var(--mono); font-size:13px; color:var(--gold); margin-bottom:12px; letter-spacing:0.03em;
+  }
+  .check-item{
+    display:flex; align-items:flex-start; gap:10px; padding:9px 0;
+    border-bottom:1px solid var(--border-soft); max-width:74ch;
+  }
+  .check-item input[type="checkbox"]{
+    accent-color:var(--teal); width:16px; height:16px; margin-top:2px; flex-shrink:0; cursor:pointer;
+  }
+  .check-item label{font-size:14.5px; color:var(--text-dim); cursor:pointer;}
+  .check-item input:checked + label{color:var(--text-faint); text-decoration:line-through;}
+
+  footer{padding:48px 56px 64px;}
+  footer p{font-size:13.5px; color:var(--text-faint); max-width:70ch;}
+
+  @media (max-width:900px){
+    .sidebar{
+      position:fixed; left:0; top:0; bottom:0; z-index:50;
+      transform:translateX(-100%); transition:transform .2s ease;
+      background:var(--bg); width:78vw; max-width:300px;
+    }
+    .sidebar.open{transform:translateX(0); box-shadow:30px 0 60px rgba(0,0,0,0.5);}
+    .nav-toggle{
+      display:block; position:fixed; top:14px; left:14px; z-index:60;
+      background:var(--bg-card); border:1px solid var(--border); color:var(--text);
+      font-family:var(--mono); font-size:12px; padding:8px 12px; border-radius:8px;
+    }
+    .hero, section, footer{padding-left:24px; padding-right:24px;}
+    .hero{padding-top:72px;}
+  }
+</style>
+</head>
+<body>
+
+<button class="nav-toggle" id="navToggle">☰ Sections</button>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar">
+    <span class="sidebar-brand">playbook<span>.v1 / free</span></span>
+    <ul class="nav-list">
+      <li><a href="#orientation">/00 — orientation</a></li>
+      <li><a href="#foundation">/01 — foundation</a></li>
+      <li><a href="#technical">/02 — technical-layer</a></li>
+      <li><a href="#content">/03 — content-layer</a></li>
+      <li><a href="#authority">/04 — authority-layer</a></li>
+      <li><a href="#outreach">/04b — outreach-templates</a></li>
+      <li><a href="#measurement">/05 — measurement</a></li>
+      <li><a href="#action-plan">/06 — 30-60-90-plan</a></li>
+      <li><a href="#tool-stack">/07 — free-tool-library</a></li>
+      <li><a href="#mistakes">/08 — common-mistakes</a></li>
+      <li><a href="#glossary">/09 — glossary</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="hero-eyebrow">$0 budget · content site / blog / personal brand</div>
+      <h1>The Free AI &amp; Search Visibility Playbook</h1>
+      <p class="lead">A complete, no-cost setup for getting found in <strong>both</strong> classic search and AI answer engines — Google, Bing, ChatGPT, Perplexity, Gemini, and Copilot. Every tool and tactic here is free.</p>
+
+      <div class="crawl-log">
+        <div class="crawl-log-bar">
+          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          <span class="path">~/yoursite.com — access.log</span>
+        </div>
+        <div class="crawl-log-body">
+          <div class="crawl-log-row"><span class="method">GET</span> /robots.txt        Googlebot       <span class="ok">200 OK</span></div>
+          <div class="crawl-log-row"><span class="method">GET</span> /robots.txt        GPTBot          <span class="ok">200 OK</span></div>
+          <div class="crawl-log-row"><span class="method">GET</span> /sitemap.xml       Bingbot         <span class="ok">200 OK</span></div>
+          <div class="crawl-log-row"><span class="method">GET</span> /your-best-post    PerplexityBot   <span class="ok">200 OK</span></div>
+          <div class="crawl-log-row"><span class="method">GET</span> /llms.txt          ClaudeBot       <span class="miss">404</span> <span class="note">← this guide fixes that</span></div>
+          <div class="crawl-log-row"><span class="method">GET</span> /llms.txt          PerplexityBot   <span class="miss">404</span> <span class="note">← and this</span></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 00 ORIENTATION -->
+    <section id="orientation">
+      <div class="eyebrow">/00</div>
+      <h2>Orientation: two audiences, one site</h2>
+      <p class="section-intro">Your content now has two different readers: a human typing into a search box, and a bot fetching your page on behalf of an AI model that's about to answer that human's question for them. Optimizing for one doesn't automatically cover the other.</p>
+
+      <h3>SEO vs. AEO/GEO — what's actually different</h3>
+      <ul class="bullets">
+        <li><strong>SEO (classic)</strong> gets your page indexed and ranked so a human clicks a blue link. It lives or dies on technical health, keywords, and backlinks.</li>
+        <li><strong>AEO (Answer Engine Optimization)</strong> is about being the specific source an AI quotes or cites when it writes an answer — it operates at the level of individual facts and claims, not whole pages.</li>
+        <li><strong>GEO (Generative Engine Optimization)</strong> is the umbrella term for AEO plus the broader work of being a trusted, well-structured entity across the entire AI search landscape.</li>
+        <li>They overlap more than they conflict: clean technical SEO and clear, well-sourced writing feed both systems at once. You are not choosing one over the other — you're building one stack that serves both.</li>
+      </ul>
+
+      <div class="card">
+        <p style="margin-bottom:0;"><strong>Why this matters now:</strong> AI-generated answers now appear on a majority of Google searches, and a meaningful and growing share of research-stage traffic happens inside ChatGPT, Perplexity, and Gemini before a user ever opens a search engine. Bing's index in particular feeds ChatGPT Search directly — which is part of why a normally-ignored free tool (Bing Webmaster Tools) matters more in 2026 than it used to.</p>
+      </div>
+
+      <div class="caveat"><strong>Honest framing:</strong> AI-citation tracking tools are still immature compared to mature SEO tooling like Search Console. Expect to do some of this measurement by hand (Layer 5 below), and expect results over weeks, not days.</div>
+    </section>
+
+    <!-- 01 FOUNDATION -->
+    <section id="foundation">
+      <div class="eyebrow">/01</div>
+      <h2>Foundation accounts <span class="tag tag-critical" style="font-size:10px;">do this first</span></h2>
+      <p class="section-intro">Three free dashboards. Ten minutes apiece. Everything else in this guide is easier to measure once these exist.</p>
+
+      <h3>Google Search Console <span class="tag tag-critical">critical</span></h3>
+      <ul class="bullets">
+        <li>Verify your <strong>domain property</strong> (not just a URL-prefix property) via DNS TXT record at your registrar — this covers http/https and all subdomains in one verification.</li>
+        <li>Submit your XML sitemap under Sitemaps.</li>
+        <li>Check Coverage / Pages weekly at first: this is where you'll catch indexing problems before they cost you visibility anywhere downstream.</li>
+      </ul>
+
+      <h3>Bing Webmaster Tools <span class="tag tag-critical">critical, often skipped</span></h3>
+      <ul class="bullets">
+        <li>Use <strong>"Import from Google Search Console"</strong> — it pulls in verification and your sitemap automatically, done in about two minutes.</li>
+        <li>Matters beyond Bing's own ~5% search share: ChatGPT Search retrieves live results through Bing's index, so a site that's poorly indexed in Bing can be invisible to ChatGPT even if it ranks fine on Google.</li>
+        <li>While you're in there, run the free <strong>SEO Analyzer</strong> on your top 20 pages — it catches missing titles, thin content, and duplicate meta descriptions that Search Console doesn't flag.</li>
+      </ul>
+
+      <h3>Google Analytics 4</h3>
+      <ul class="bullets">
+        <li>If it's not installed, install it. If it is, check the <strong>Default Channel Group</strong> report for a relatively new <strong>"AI Assistants" / AI-referral channel</strong> — this is how you'll see actual click-through traffic from ChatGPT, Gemini, Claude, and Perplexity once it starts arriving.</li>
+        <li>Set up at least one conversion event (newsletter signup, contact form, whatever your site's real goal is) so traffic data ties back to something that matters.</li>
+        <li>Optional companion: <a href="https://clarity.microsoft.com" target="_blank" style="color:var(--teal);">Microsoft Clarity</a> — free, unlimited heatmaps and session recordings, shows you where readers actually stop reading on your top posts.</li>
+      </ul>
+    </section>
+
+    <!-- 02 TECHNICAL -->
+    <section id="technical">
+      <div class="eyebrow">/02</div>
+      <h2>Technical layer: the files crawlers actually read</h2>
+      <p class="section-intro">Before a bot reads your prose, it reads your infrastructure. These four files/protocols decide whether your content is even reachable.</p>
+
+      <h3>robots.txt <span class="tag tag-critical">critical</span></h3>
+      <p>Check that you aren't accidentally blocking the crawlers you <em>want</em>. Many older robots.txt files block all bots by default — including the ones that bring you AI citations.</p>
+      <pre>User-agent: *
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://yoursite.com/sitemap.xml</pre>
+      <p style="margin-top:-10px;">Note: some platforms run separate user-agents for <em>training</em> vs. <em>live answer retrieval</em> (e.g. a "training" bot vs. a "search" bot) — if you ever want to opt out of training while staying eligible for citations, that distinction is what to look for. Crawler user-agent names change, so check the publisher's current list before assuming any specific name below still applies.</p>
+
+      <h3>sitemap.xml</h3>
+      <p>Most CMSs (WordPress + Yoast/RankMath, Webflow, Ghost) generate this automatically. Confirm it's clean: only canonical, indexable URLs — no thin tag pages, no duplicates — then make sure it's submitted in <em>both</em> Search Console and Bing Webmaster Tools.</p>
+
+      <h3>llms.txt <span class="tag tag-optional">experimental — optional</span></h3>
+      <p>A plain Markdown file at <code class="inline">yoursite.com/llms.txt</code> that gives AI systems a curated map of your most important pages. It's free and takes about 30 minutes.</p>
+      <div class="caveat"><strong>Be honest with yourself about this one:</strong> as of mid-2026, no major AI lab (OpenAI, Anthropic, Google, Perplexity) has publicly confirmed it actually reads or prioritizes llms.txt, and at least one controlled industry test found no measurable difference in AI citations after adding it. Treat it as a low-cost, zero-downside experiment — not a priority over Layers 01–04.</div>
+      <pre># Your Site Name
+
+> One or two sentences describing what your site covers and who it's for.
+
+## Core content
+- [Your best pillar guide](https://yoursite.com/pillar-page): one-line description
+- [Second cornerstone post](https://yoursite.com/guide-2): one-line description
+
+## About
+- [About / author page](https://yoursite.com/about)
+
+## Optional
+- [Full archive](https://yoursite.com/archive): supplementary posts</pre>
+
+      <h3>IndexNow <span class="tag tag-content">high value, set once</span></h3>
+      <p>An open protocol that pings Bing (and Yandex, Seznam) the instant you publish or update a post, instead of waiting for the next crawl cycle. Faster Bing indexing → faster eligibility for ChatGPT Search citations.</p>
+      <ul class="bullets">
+        <li>Generate a key at <code class="inline">bing.com/indexnow/getstarted</code>, host the key file at your site root.</li>
+        <li>WordPress: a free "IndexNow" plugin handles this automatically on publish/update.</li>
+        <li>Custom site: send a POST request whenever you publish.</li>
+      </ul>
+      <pre class="gold">POST https://api.indexnow.org/indexnow
+Content-Type: application/json
+
+{
+  "host": "yoursite.com",
+  "key": "your-api-key",
+  "keyLocation": "https://yoursite.com/your-api-key.txt",
+  "urlList": ["https://yoursite.com/your-new-post"]
+}</pre>
+
+      <h3>Page speed / Core Web Vitals</h3>
+      <p>Run <strong><a href="https://pagespeed.web.dev" target="_blank" style="color:var(--teal);">PageSpeed Insights</a></strong> (free, Google) on your three highest-traffic pages. Slow, layout-shifty pages quietly hurt both ranking and the odds a crawler fully renders your content before timing out. For a second opinion or historical trend graphs, <a href="https://gtmetrix.com" target="_blank" style="color:var(--teal);">GTmetrix</a> (free tier) and <a href="https://www.webpagetest.org" target="_blank" style="color:var(--teal);">WebPageTest</a> (free, unlimited public tests) both run the same kind of audit from different vantage points.</p>
+    </section>
+
+    <!-- 03 CONTENT LAYER -->
+    <section id="content">
+      <div class="eyebrow">/03</div>
+      <h2>Content layer: write to be quoted, not just read</h2>
+      <p class="section-intro">This is the highest-leverage, zero-cost layer — and the one most people skip in favor of fiddling with files. AI engines extract facts, not vibes.</p>
+
+      <h3>Keyword &amp; question research <span class="tag tag-content">do this before you write</span></h3>
+      <p>Both Google's ranking systems and AI answer engines reward content that matches real questions people actually ask — not guesses. All of these are free:</p>
+      <ul class="bullets">
+        <li><strong>Google Search Console</strong> → Performance report: shows queries you already get impressions for but rank low on — often the fastest wins available. (Linked in Layer 01.)</li>
+        <li><strong>Google Keyword Planner</strong> — free with any Google Ads account (no ad spend required to use the research tool). <a href="https://ads.google.com/home/tools/keyword-planner/" target="_blank" style="color:var(--teal);">ads.google.com/home/tools/keyword-planner</a></li>
+        <li><strong>Google Trends</strong> — direction and seasonality for a topic over time. <a href="https://trends.google.com" target="_blank" style="color:var(--teal);">trends.google.com</a></li>
+        <li><strong>AnswerThePublic</strong> — pulls real question-phrased queries people type; free tier gives a limited number of searches per day. <a href="https://answerthepublic.com" target="_blank" style="color:var(--teal);">answerthepublic.com</a></li>
+        <li><strong>Ubersuggest</strong> — keyword volume, difficulty, and content ideas; free tier limited to a handful of lookups per day. <a href="https://neilpatel.com/ubersuggest/" target="_blank" style="color:var(--teal);">neilpatel.com/ubersuggest</a></li>
+      </ul>
+
+      <h3>Answer-first structure <span class="tag tag-content">content</span></h3>
+      <p>Open every section with a direct, self-contained answer in roughly 40–60 words <em>before</em> you elaborate. AI systems extract the clearest, most quotable sentence in a section — give them one on purpose instead of burying it in paragraph three.</p>
+
+      <h3>Make claims citable</h3>
+      <ul class="bullets">
+        <li>Drop a specific stat, date, or named source roughly every 150–200 words. Vague claims don't get cited; specific, attributable ones do.</li>
+        <li>Add <strong>FAQ sections</strong> to your highest-traffic posts — genuine reader questions, direct answers, no filler.</li>
+      </ul>
+
+      <h3>Schema markup <span class="tag tag-critical">free, do it once per template</span></h3>
+      <p>Structured data doesn't create content out of thin air — it labels what's already on the page so machines don't have to guess. <strong>Article, FAQPage, and Author/Person</strong> schema matter most for a content site. Hand-write the JSON-LD below, or generate it with a free tool: <a href="https://technicalseo.com/tools/schema-markup-generator/" target="_blank" style="color:var(--teal);">TechnicalSEO.com's Schema Generator</a> (form-based, no signup) or <a href="https://jsonld.com/json-ld-generator/" target="_blank" style="color:var(--teal);">jsonld.com</a>. If you're on WordPress, the free tiers of <strong>Rank Math</strong> or <strong>Yoast SEO</strong> generate most of this automatically. Validate everything with Google's free <a href="https://search.google.com/test/rich-results" target="_blank" style="color:var(--teal);">Rich Results Test</a>.</p>
+      <pre>{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Your Post Title",
+  "author": { "@type": "Person", "name": "Your Name", "url": "https://yoursite.com/about" },
+  "datePublished": "2026-01-10",
+  "dateModified": "2026-06-15",
+  "publisher": { "@type": "Organization", "name": "Your Site Name" }
+}</pre>
+      <pre>{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [{
+    "@type": "Question",
+    "name": "Your reader's actual question?",
+    "acceptedAnswer": { "@type": "Answer", "text": "A direct 40-60 word answer." }
+  }]
+}</pre>
+
+      <h3>Build topic clusters, not scattered posts</h3>
+      <p>Pick 2–3 core topics and go deep: one comprehensive pillar page plus several supporting posts, all internally linked. Both Google's ranking systems and AI citation models reward demonstrated topical depth over a wide spread of shallow, disconnected posts.</p>
+
+      <h3>Freshness is a ranking <em>and</em> citation signal <span class="tag tag-critical">recurring task</span></h3>
+      <p>Industry citation research has found that the large majority of AI citations on commercial or comparison-style queries go to pages updated within the past year — and most of those within the last six months. Set a recurring quarterly slot to revisit and update your best 10–15 posts: new stats, a corrected claim, an updated <code class="inline">dateModified</code>.</p>
+
+      <h3>Basic E-E-A-T</h3>
+      <ul class="bullets">
+        <li>A real author bio with a name, photo, and your actual credentials/experience — not "Admin."</li>
+        <li>A genuine About page that explains who runs the site and why it's trustworthy.</li>
+        <li>Original insight somewhere in each post — your own take, data, or experience — not a reshuffled summary of what's already ranking.</li>
+      </ul>
+    </section>
+
+    <!-- 04 AUTHORITY -->
+    <section id="authority">
+      <div class="eyebrow">/04</div>
+      <h2>Authority layer: trust signals beyond your own site</h2>
+      <p class="section-intro">AI models weigh how often the web independently talks about you, not just what you say about yourself. This is the slowest layer to build and the hardest to fake.</p>
+
+      <h3>Be present where AI models look for social proof</h3>
+      <ul class="bullets">
+        <li><strong>Reddit and Quora:</strong> answer real questions in your niche genuinely; link to your own content only when it's the most useful answer, not every time. Forum activity is one of the more consistently cited correlations with AI citation rates in current SEO-vendor research — treat the multiplier numbers you'll see in marketing blogs as directional, not precise.</li>
+        <li><strong>YouTube:</strong> if you ever publish video, accurate captions/transcripts make that content readable by the same systems that read your blog.</li>
+      </ul>
+
+      <h3>Backlinks still matter — for a different reason now <span class="tag tag-critical">free link building</span></h3>
+      <p>Backlinks aren't just a ranking signal anymore; they're part of how AI systems decide which sources are trustworthy enough to cite. The old default here — HARO — shut down for good in December 2024 after its acquisition by Cision. The category didn't die, it fragmented: there are now several free, active platforms instead of one, and research on overlap between them finds any two platforms share only about 17% of the same opportunities. That means a real link-building setup checks more than one.</p>
+
+      <div class="card">
+        <p style="margin-bottom:8px;"><strong>Free journalist / expert-source platforms (the HARO replacements):</strong></p>
+        <ul class="bullets" style="margin-bottom:0;">
+          <li><strong>HARO</strong> — revived in April 2025 by Featured.com as a free daily-digest newsletter, same brand, new owner. <a href="https://www.helpareporter.com" target="_blank" style="color:var(--teal);">helpareporter.com</a></li>
+          <li><strong>Source of Sources (SoS)</strong> — built by HARO's original founder after the shutdown; free, email-only, strict anti-spam rules. <a href="https://www.sourceofsources.com" target="_blank" style="color:var(--teal);">sourceofsources.com</a></li>
+          <li><strong>Featured</strong> — curated expert-roundup model feeding Fortune, Fast Company, Yahoo and similar; free tier gives a limited number of queries/month. <a href="https://featured.com" target="_blank" style="color:var(--teal);">featured.com</a></li>
+          <li><strong>Qwoted</strong> — verified-expert matching with higher-DR publications; free tier is capped (around two pitches/month with a delay). <a href="https://qwoted.com" target="_blank" style="color:var(--teal);">qwoted.com</a></li>
+          <li><strong>SourceBottle</strong> — free tier, strong outside the US (AU/UK), includes podcast and blogger callouts, not just journalists. <a href="https://www.sourcebottle.com" target="_blank" style="color:var(--teal);">sourcebottle.com</a></li>
+          <li><strong>MentionMatch</strong> (formerly "Help a B2B Writer") — free, narrow B2B/SaaS/tech focus, every request shows the publication's Domain Rating up front. <a href="https://mentionmatch.com" target="_blank" style="color:var(--teal);">mentionmatch.com</a></li>
+          <li><strong>#JournoRequest / #PRRequest on X</strong> — zero platform, zero signup: search the hashtags, reply or DM directly. Fastest response window of any option here, but needs manual monitoring.</li>
+        </ul>
+      </div>
+      <p>Pitching mechanics that actually matter: <strong>reply fast</strong> (speed beats polish — being first in the inbox wins more than being most eloquent), <strong>stay strictly on-topic</strong> (off-topic or spammy pitches get you banned from most of these for good), and <strong>write it yourself</strong> — every platform above is fighting an AI-spam problem right now, and pitches that read as AI-generated are the first thing moderators and journalists filter out.</p>
+
+      <h3>Other free link-building tactics</h3>
+      <ul class="bullets">
+        <li><strong>Guest posts:</strong> start with respected niche blogs that already link out to sources like yours, not generic "write for us" content farms — one relevant link outweighs ten irrelevant ones.</li>
+        <li><strong>Resource-page link building:</strong> search <code class="inline">"your topic" + "resources"</code> or <code class="inline">"your topic" + "useful links"</code> to find curated lists in your niche, then email the page owner suggesting your best relevant post.</li>
+        <li><strong>Broken-link building:</strong> use a free tool like the <em>Check My Links</em> Chrome extension to scan resource pages in your niche for dead links, then suggest your content as the replacement.</li>
+        <li><strong>Podcast guesting / interviews:</strong> usually comes with a free backlink from the show notes page, plus it builds the kind of "someone independently talked about me" signal AI authority scoring leans on.</li>
+      </ul>
+
+      <h3>Author/Person schema + a real bio page</h3>
+      <p>Pairs with the E-E-A-T work in Layer 03 — a dedicated author page with Person schema gives both Google and AI entity-recognition systems a clean, unambiguous record of who you are.</p>
+    </section>
+
+    <!-- 04b OUTREACH TEMPLATES -->
+    <section id="outreach">
+      <div class="eyebrow">/04b</div>
+      <h2>Outreach templates</h2>
+      <p class="section-intro">Copy-paste starting points. Swap every bracket. The goal of all three is the same: get to the point in the first two sentences — moderators and journalists skim.</p>
+
+      <h3>Journalist / source-request pitch <span class="tag tag-content">HARO-style platforms</span></h3>
+      <pre>Subject: Re: [exact query topic]
+
+Hi [name],
+
+[Direct answer to their question in 1–2 sentences — lead with the
+insight, not your bio.]
+
+[1–2 sentences of supporting detail, a stat, or a specific example
+that backs it up.]
+
+Happy to expand on this or jump on a quick call if useful.
+
+[Your name]
+[One-line credential: title + site/company]
+[Site URL]</pre>
+
+      <h3>Resource-page link suggestion</h3>
+      <pre>Subject: Quick addition for your [topic] resources page
+
+Hi [name],
+
+I was reading your [resources/links] page on [page topic] — really
+useful roundup, especially the section on [specific item you liked,
+proves you actually read it].
+
+I noticed it doesn't currently include anything on [your specific
+angle]. I put together [your post title] ([URL]), which covers
+[one-sentence description of what makes it useful, not just "more
+info"].
+
+Totally understand if it's not the right fit — figured it was worth
+flagging either way. Thanks for keeping the page updated.
+
+[Your name]</pre>
+
+      <h3>Guest post pitch</h3>
+      <pre>Subject: Guest post idea for [site name]: [working title]
+
+Hi [name],
+
+I've been reading [site name] for a while — [specific recent post]
+was particularly good. I write about [your niche] at [your site],
+and I'd like to pitch a guest post:
+
+"[Working title]" — [1–2 sentence outline of the angle and why it's
+different from what's already been covered on their site].
+
+Happy to send a full draft on spec, or adjust the angle to whatever
+fits your editorial calendar better. Let me know!
+
+[Your name]
+[Site URL]</pre>
+    </section>
+
+    <!-- 05 MEASUREMENT -->
+    <section id="measurement">
+      <div class="eyebrow">/05</div>
+      <h2>Measurement: mostly manual, and that's normal</h2>
+      <p class="section-intro">There's no free Search-Console-equivalent for AI citations yet. The honest free approach is a recurring manual check, logged consistently.</p>
+
+      <h3>Monthly AI visibility check</h3>
+      <ul class="bullets">
+        <li>Pick 8–10 prompts a real reader would actually type — a mix of informational, comparison, and "best X for Y" questions in your niche.</li>
+        <li>Run each one in ChatGPT Search, Perplexity, Google AI Overview/AI Mode, Gemini, and Copilot.</li>
+        <li>Log in a simple spreadsheet: were you cited, what wording was used, which competitor showed up instead.</li>
+        <li>When a competitor gets cited and you don't, look at <em>why</em> — usually it's a clearer direct answer, a newer date, or a structure your post is missing.</li>
+      </ul>
+      <div class="card">
+        <p style="margin-bottom:8px;"><strong>Free spot-check tool:</strong> Semrush's <a href="https://www.semrush.com/free-tools/ai-search-visibility-checker/" target="_blank" style="color:var(--teal);">AI Search Visibility Checker</a> runs a free, no-signup scan of your brand across ChatGPT, Gemini, and AI Overviews.</p>
+        <p style="margin-bottom:0;"><strong>Be honest about this category:</strong> almost every other AI-citation tracker (Otterly, Profound, SE Ranking's AI toolkit, Rankability, and similar) is a paid subscription, typically $29–$250+/month, with no real free tier — recurring AI-citation tracking just isn't a solved-for-free problem yet as of mid-2026. The manual monthly check above, supplemented by an occasional free Semrush scan, is the realistic $0 setup.</p>
+      </div>
+
+      <h3>What to watch in your existing dashboards</h3>
+      <ul class="bullets">
+        <li><strong>Search Console:</strong> impressions/clicks/average position trends on your target queries, month over month — this is the most reliable free rank-tracking data that exists, because it's first-party from Google itself.</li>
+        <li><strong>GA4:</strong> growth (or not) in the AI-referral channel grouping mentioned in Layer 01.</li>
+        <li><strong>Bing Webmaster Tools:</strong> indexing speed after publishing — a useful proxy for how quickly new content becomes eligible for Bing-fed AI citations.</li>
+        <li><strong>Spot-check tool:</strong> <a href="https://www.seobility.net/en/rankingcheck/" target="_blank" style="color:var(--teal);">Seobility's free Ranking Checker</a> for a one-off "where do I rank for this keyword right now" lookup — free, but manual, not a recurring tracker.</li>
+      </ul>
+    </section>
+
+    <!-- 06 ACTION PLAN -->
+    <section id="action-plan">
+      <div class="eyebrow">/06</div>
+      <h2>30 / 60 / 90-day action plan</h2>
+      <p class="section-intro">Checkboxes are for this session only — screenshot or copy this list somewhere that persists for you.</p>
+
+      <div class="checklist-group">
+        <h4>Days 1–7 — Foundation</h4>
+        <div class="check-item"><input type="checkbox" id="c1"><label for="c1">Verify domain property in Google Search Console (DNS TXT), submit sitemap</label></div>
+        <div class="check-item"><input type="checkbox" id="c2"><label for="c2">Import site into Bing Webmaster Tools from GSC, submit sitemap</label></div>
+        <div class="check-item"><input type="checkbox" id="c3"><label for="c3">Generate IndexNow key, host key file at site root</label></div>
+        <div class="check-item"><input type="checkbox" id="c4"><label for="c4">Confirm GA4 is live; check for the AI-referral channel grouping</label></div>
+        <div class="check-item"><input type="checkbox" id="c5"><label for="c5">Run PageSpeed Insights on your 3 highest-traffic pages, fix anything red</label></div>
+      </div>
+
+      <div class="checklist-group">
+        <h4>Days 8–30 — Technical + content structure</h4>
+        <div class="check-item"><input type="checkbox" id="c6"><label for="c6">Audit robots.txt — confirm GPTBot/ClaudeBot/PerplexityBot aren't accidentally blocked</label></div>
+        <div class="check-item"><input type="checkbox" id="c7"><label for="c7">Add Article + Author schema to your top 10 posts; validate with Rich Results Test</label></div>
+        <div class="check-item"><input type="checkbox" id="c8"><label for="c8">Add genuine FAQ sections + FAQPage schema to your 5 highest-traffic posts</label></div>
+        <div class="check-item"><input type="checkbox" id="c9"><label for="c9">Rewrite opening sentences of top 10 posts to lead with a direct, quotable answer</label></div>
+        <div class="check-item"><input type="checkbox" id="c10"><label for="c10">(Optional) Publish a basic llms.txt — 30 min, free, unproven but zero downside</label></div>
+      </div>
+
+      <div class="checklist-group">
+        <h4>Days 31–60 — Authority + freshness</h4>
+        <div class="check-item"><input type="checkbox" id="c11"><label for="c11">Refresh your 2–3 best, most comprehensive posts (new stats, new sections, updated dateModified)</label></div>
+        <div class="check-item"><input type="checkbox" id="c12"><label for="c12">Set a recurring quarterly refresh reminder for your top 10–15 posts</label></div>
+        <div class="check-item"><input type="checkbox" id="c13"><label for="c13">Identify 5 relevant subreddits/Quora topics in your niche; start answering genuinely</label></div>
+        <div class="check-item"><input type="checkbox" id="c13b"><label for="c13b">Sign up for 2–3 free journalist platforms (SoS, Featured/HARO, MentionMatch if B2B) and start pitching</label></div>
+        <div class="check-item"><input type="checkbox" id="c14"><label for="c14">Pitch 2–3 guest posts or podcast/interview appearances</label></div>
+        <div class="check-item"><input type="checkbox" id="c15"><label for="c15">Write (or rewrite) a real About/Author page with credentials and a photo</label></div>
+      </div>
+
+      <div class="checklist-group">
+        <h4>Days 61–90 — Measurement + iteration</h4>
+        <div class="check-item"><input type="checkbox" id="c16"><label for="c16">Pick 8–10 real-reader prompts; run monthly across ChatGPT, Perplexity, AI Overview, Gemini, Copilot</label></div>
+        <div class="check-item"><input type="checkbox" id="c17"><label for="c17">Log citation results in a simple spreadsheet, month over month</label></div>
+        <div class="check-item"><input type="checkbox" id="c18"><label for="c18">Review GSC + GA4 trends; note which queries/pages are gaining</label></div>
+        <div class="check-item"><input type="checkbox" id="c19"><label for="c19">Double down on whichever topic cluster shows the strongest early signal</label></div>
+      </div>
+    </section>
+
+    <!-- 07 TOOL LIBRARY -->
+    <section id="tool-stack">
+      <div class="eyebrow">/07</div>
+      <h2>The complete free tool library</h2>
+      <p class="section-intro">Every free option for every job in this guide, grouped by what it does. Where a category has no honest free recurring option, that's stated plainly instead of papered over.</p>
+
+      <h3>Indexing &amp; crawl control</h3>
+      <table>
+        <thead><tr><th>Tool</th><th>What it's for</th><th>Link</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Google Search Console</td><td>Indexing, search performance, sitemap submission <span class="pill">free</span></td><td><a href="https://search.google.com/search-console" target="_blank">search.google.com/search-console</a></td></tr>
+          <tr><td class="name">Bing Webmaster Tools</td><td>Bing indexing, IndexNow, SEO Analyzer <span class="pill">free</span></td><td><a href="https://www.bing.com/webmasters" target="_blank">bing.com/webmasters</a></td></tr>
+          <tr><td class="name">IndexNow</td><td>Instant crawl notification to Bing/Yandex/Seznam <span class="pill">free</span></td><td><a href="https://www.indexnow.org" target="_blank">indexnow.org</a></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Analytics &amp; behavior</h3>
+      <table>
+        <thead><tr><th>Tool</th><th>What it's for</th><th>Link</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Google Analytics 4</td><td>Traffic + AI-referral channel tracking <span class="pill">free</span></td><td><a href="https://analytics.google.com" target="_blank">analytics.google.com</a></td></tr>
+          <tr><td class="name">Microsoft Clarity</td><td>Heatmaps, session recordings <span class="pill">free</span></td><td><a href="https://clarity.microsoft.com" target="_blank">clarity.microsoft.com</a></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Page speed &amp; Core Web Vitals</h3>
+      <table>
+        <thead><tr><th>Tool</th><th>What it's for</th><th>Link</th></tr></thead>
+        <tbody>
+          <tr><td class="name">PageSpeed Insights</td><td>Google's own Core Web Vitals scorer <span class="pill">free</span></td><td><a href="https://pagespeed.web.dev" target="_blank">pagespeed.web.dev</a></td></tr>
+          <tr><td class="name">GTmetrix</td><td>Performance audit + historical trend graphs <span class="pill">free tier</span></td><td><a href="https://gtmetrix.com" target="_blank">gtmetrix.com</a></td></tr>
+          <tr><td class="name">WebPageTest</td><td>Multi-location performance testing <span class="pill">free</span></td><td><a href="https://www.webpagetest.org" target="_blank">webpagetest.org</a></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Keyword &amp; question research</h3>
+      <table>
+        <thead><tr><th>Tool</th><th>What it's for</th><th>Link</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Google Keyword Planner</td><td>Search volume/CPC data <span class="pill">free</span> (Ads account, no spend needed)</td><td><a href="https://ads.google.com/home/tools/keyword-planner/" target="_blank">ads.google.com/home/tools/keyword-planner</a></td></tr>
+          <tr><td class="name">Google Trends</td><td>Topic demand over time <span class="pill">free</span></td><td><a href="https://trends.google.com" target="_blank">trends.google.com</a></td></tr>
+          <tr><td class="name">AnswerThePublic</td><td>Real question-phrased queries <span class="pill">free tier</span></td><td><a href="https://answerthepublic.com" target="_blank">answerthepublic.com</a></td></tr>
+          <tr><td class="name">Ubersuggest</td><td>Keyword volume, difficulty, content ideas <span class="pill">free tier</span></td><td><a href="https://neilpatel.com/ubersuggest/" target="_blank">neilpatel.com/ubersuggest</a></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Schema / structured data</h3>
+      <table>
+        <thead><tr><th>Tool</th><th>What it's for</th><th>Link</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Rich Results Test</td><td>Validate Article/FAQ/Author schema <span class="pill">free</span></td><td><a href="https://search.google.com/test/rich-results" target="_blank">search.google.com/test/rich-results</a></td></tr>
+          <tr><td class="name">TechnicalSEO.com Schema Generator</td><td>Form-based JSON-LD generator, no signup <span class="pill">free</span></td><td><a href="https://technicalseo.com/tools/schema-markup-generator/" target="_blank">technicalseo.com/tools/schema-markup-generator</a></td></tr>
+          <tr><td class="name">jsonld.com Generator</td><td>17 schema types, live JSON-LD preview <span class="pill">free</span></td><td><a href="https://jsonld.com/json-ld-generator/" target="_blank">jsonld.com/json-ld-generator</a></td></tr>
+          <tr><td class="name">Rank Math (WordPress)</td><td>Auto-generates schema on publish <span class="pill">free tier</span></td><td><a href="https://rankmath.com" target="_blank">rankmath.com</a></td></tr>
+          <tr><td class="name">Yoast SEO (WordPress)</td><td>Auto-generates schema on publish <span class="pill">free tier</span></td><td><a href="https://yoast.com" target="_blank">yoast.com</a></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Site audit / technical crawl</h3>
+      <table>
+        <thead><tr><th>Tool</th><th>What it's for</th><th>Link</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Screaming Frog SEO Spider</td><td>Full technical crawl <span class="pill">free up to 500 URLs</span></td><td><a href="https://www.screamingfrog.co.uk/seo-spider/" target="_blank">screamingfrog.co.uk/seo-spider</a></td></tr>
+          <tr><td class="name">Seobility</td><td>On-page audit <span class="pill">free up to 1,000 subpages</span></td><td><a href="https://www.seobility.net" target="_blank">seobility.net</a></td></tr>
+          <tr><td class="name">Ahrefs Webmaster Tools</td><td>Site audit for verified site owners <span class="pill">free</span></td><td><a href="https://ahrefs.com/webmaster-tools" target="_blank">ahrefs.com/webmaster-tools</a></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Backlink checkers</h3>
+      <table>
+        <thead><tr><th>Tool</th><th>What it's for</th><th>Link</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Ahrefs Webmaster Tools</td><td>Backlink data for verified sites <span class="pill">free</span></td><td><a href="https://ahrefs.com/webmaster-tools" target="_blank">ahrefs.com/webmaster-tools</a></td></tr>
+          <tr><td class="name">Seobility Backlink Checker</td><td>Quick backlink-profile lookup <span class="pill">free, limited results</span></td><td><a href="https://www.seobility.net/en/backlinkchecker/" target="_blank">seobility.net/en/backlinkchecker</a></td></tr>
+          <tr><td class="name">Ubersuggest</td><td>Backlink overview alongside keyword data <span class="pill">free tier</span></td><td><a href="https://neilpatel.com/ubersuggest/" target="_blank">neilpatel.com/ubersuggest</a></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Rank tracking (classic search)</h3>
+      <p>Be honest about this one: there's no robust, fully-free <em>recurring/automated</em> rank tracker on the market — every dedicated one (Nightwatch, SE Ranking, Wincher, Serpstat) is a paid subscription. The free, accurate, first-party option is Search Console; spot-check tools fill the gap for one-off lookups.</p>
+      <table>
+        <thead><tr><th>Tool</th><th>What it's for</th><th>Link</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Google Search Console</td><td>The closest thing to a free ongoing rank tracker <span class="pill">free</span></td><td><a href="https://search.google.com/search-console" target="_blank">search.google.com/search-console</a></td></tr>
+          <tr><td class="name">Seobility Ranking Checker</td><td>One-off "where do I rank right now" lookup <span class="pill">free, manual</span></td><td><a href="https://www.seobility.net/en/rankingcheck/" target="_blank">seobility.net/en/rankingcheck</a></td></tr>
+        </tbody>
+      </table>
+
+      <h3>AI search visibility checking</h3>
+      <p>Same honesty applies here, more so: this category is dominated by paid platforms (Otterly, Profound, SE Ranking's AI toolkit, Rankability, Omnia, ZipTie — typically $29–$250+/month). One genuinely free option exists:</p>
+      <table>
+        <thead><tr><th>Tool</th><th>What it's for</th><th>Link</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Semrush AI Search Visibility Checker</td><td>Free, no-signup scan across ChatGPT, Gemini, AI Overviews <span class="pill">free</span></td><td><a href="https://www.semrush.com/free-tools/ai-search-visibility-checker/" target="_blank">semrush.com/free-tools/ai-search-visibility-checker</a></td></tr>
+        </tbody>
+      </table>
+
+      <h3>PR / link building (free journalist platforms)</h3>
+      <p>Full detail and pitching mechanics are in Layer 04 — repeated here so this is a true single-page link library.</p>
+      <table>
+        <thead><tr><th>Tool</th><th>What it's for</th><th>Link</th></tr></thead>
+        <tbody>
+          <tr><td class="name">HARO (via Featured)</td><td>Daily journalist source requests <span class="pill">free</span></td><td><a href="https://www.helpareporter.com" target="_blank">helpareporter.com</a></td></tr>
+          <tr><td class="name">Source of Sources</td><td>Founder-run free successor to HARO <span class="pill">free</span></td><td><a href="https://www.sourceofsources.com" target="_blank">sourceofsources.com</a></td></tr>
+          <tr><td class="name">Featured</td><td>Curated expert-roundup placements <span class="pill">free tier</span></td><td><a href="https://featured.com" target="_blank">featured.com</a></td></tr>
+          <tr><td class="name">Qwoted</td><td>Verified expert-journalist matching <span class="pill">free tier</span></td><td><a href="https://qwoted.com" target="_blank">qwoted.com</a></td></tr>
+          <tr><td class="name">SourceBottle</td><td>Journalist/blogger/podcast callouts <span class="pill">free tier</span></td><td><a href="https://www.sourcebottle.com" target="_blank">sourcebottle.com</a></td></tr>
+          <tr><td class="name">MentionMatch</td><td>B2B/SaaS-focused source requests <span class="pill">free</span></td><td><a href="https://mentionmatch.com" target="_blank">mentionmatch.com</a></td></tr>
+          <tr><td class="name">Check My Links</td><td>Chrome extension — finds broken links to target <span class="pill">free</span></td><td>Chrome Web Store</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 08 COMMON MISTAKES -->
+    <section id="mistakes">
+      <div class="eyebrow">/08</div>
+      <h2>Common mistakes that quietly undo all of this</h2>
+      <p class="section-intro">Most of these aren't dramatic failures — they're small omissions that cap how far the rest of the playbook can work.</p>
+      <ul class="bullets">
+        <li><strong>Blocking the crawlers you want.</strong> A leftover <code class="inline">Disallow: /</code> from an old robots.txt template silently kills AI-citation eligibility — this is the single most common technical mistake.</li>
+        <li><strong>Schema that contradicts the visible page.</strong> Structured data should describe what's actually on the page. Marking up an FAQ that isn't visibly on the page, or an author who didn't write the post, creates a trust problem instead of a clarity win.</li>
+        <li><strong>Treating llms.txt as a priority.</strong> It's Layer 02's optional 30-minute task, not a substitute for Layers 01, 03, and 04. Spending a weekend perfecting it instead of fixing schema or refreshing old posts is time misallocated.</li>
+        <li><strong>Burying the answer.</strong> A great, well-researched post that opens with three paragraphs of throat-clearing before the actual answer gets skipped by both impatient readers and answer-extraction systems.</li>
+        <li><strong>Spammy, off-topic pitches on journalist platforms.</strong> Every platform in Layer 04 actively bans users for this — it costs you the channel permanently, not just that one pitch.</li>
+        <li><strong>Publishing once and never returning.</strong> Freshness is one of the few AI-citation signals with consistent research backing it. A three-year-old post with no updates is gradually losing citation eligibility even if nothing about it is factually wrong.</li>
+        <li><strong>No real author identity.</strong> "Admin," a stock photo, or no bio at all undermines E-E-A-T and gives AI entity-recognition systems nothing to anchor trust to.</li>
+      </ul>
+    </section>
+
+    <!-- 09 GLOSSARY -->
+    <section id="glossary">
+      <div class="eyebrow">/09</div>
+      <h2>Quick-reference glossary</h2>
+      <table>
+        <tbody>
+          <tr><td class="name" style="width:160px;">SEO</td><td>Search Engine Optimization — getting pages ranked and clicked in classic search results.</td></tr>
+          <tr><td class="name">AEO</td><td>Answer Engine Optimization — getting your specific facts/claims selected and cited inside an AI-generated answer.</td></tr>
+          <tr><td class="name">GEO</td><td>Generative Engine Optimization — the umbrella discipline covering AEO plus broader entity authority and trust-building across AI platforms.</td></tr>
+          <tr><td class="name">RAG</td><td>Retrieval-Augmented Generation — how most AI chat search works: the model retrieves live web pages (often via Bing or Google) and writes an answer grounded in what it finds, rather than relying only on what it learned in training.</td></tr>
+          <tr><td class="name">Schema / JSON-LD</td><td>Structured data added to a page's code that explicitly labels what something is (an article, a question, an author) so machines don't have to infer it.</td></tr>
+          <tr><td class="name">E-E-A-T</td><td>Experience, Expertise, Authoritativeness, Trust — Google's framework (also relevant to AI trust signals) for judging whether content and its author are credible.</td></tr>
+          <tr><td class="name">Core Web Vitals</td><td>Google's page-experience metrics — loading speed, interactivity, visual stability — measured for free via PageSpeed Insights.</td></tr>
+          <tr><td class="name">IndexNow</td><td>An open protocol for instantly notifying Bing, Yandex, and a few others that a URL was added, changed, or deleted, instead of waiting for the next crawl.</td></tr>
+          <tr><td class="name">llms.txt</td><td>A proposed (not officially adopted) Markdown file at a site's root that curates a list of its most important pages for AI systems to read first.</td></tr>
+          <tr><td class="name">Citation (AEO sense)</td><td>An instance where an AI answer names or links your site as the source of a fact — the core unit AEO success is measured in.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      <p><strong>Reality check:</strong> none of this guarantees citations or rankings on any specific timeline. The sites winning in 2026 are combining solid classic SEO with clear, well-sourced, regularly-updated writing — AI visibility is mostly a byproduct of doing that well, plus a handful of free technical settings that remove avoidable friction. Re-run the /05 measurement check monthly and let the data tell you which layer to invest more time in next.</p>
+    </footer>
+  </main>
+</div>
+
+<script>
+  // mobile nav toggle
+  const toggle = document.getElementById('navToggle');
+  const sidebar = document.getElementById('sidebar');
+  toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+  document.querySelectorAll('.nav-list a').forEach(a => {
+    a.addEventListener('click', () => sidebar.classList.remove('open'));
+  });
+
+  // active section highlight
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-list a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const link = document.querySelector(`.nav-list a[href="#${entry.target.id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
